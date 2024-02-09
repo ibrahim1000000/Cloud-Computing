@@ -1,0 +1,47 @@
+private void button5_Click(object sender, EventArgs e)
+{
+    int recordId;
+
+    if (int.TryParse(textBox5.Text, out recordId))
+    {
+        DeleteRecord(recordId);
+    }
+    else
+    {
+        MessageBox.Show("يرجى إدخال رقم صحيح في الحقل.");
+    }
+}
+
+private void DeleteRecord(int recordId)
+{
+    string query = "DELETE FROM Borrowings WHERE BorrowerID = @RecordId";
+
+    using (SqlConnection connection = new SqlConnection(connectionString))
+    {
+        try
+        {
+            connection.Open();
+
+            // إنشاء SqlCommand وتمرير الاستعلام والاتصال
+            SqlCommand command = new SqlCommand(query, connection);
+
+            // تعيين قيمة المعامل المسمى "@RecordId"
+            command.Parameters.AddWithValue("@RecordId", recordId);
+
+            // تنفيذ الاستعلام
+            int rowsAffected = command.ExecuteNonQuery();
+
+            if (rowsAffected > 0)
+            {
+                MessageBox.Show("تم حذف السجل بنجاح.");
+            }
+            else
+            {
+                MessageBox.Show("لم يتم العثور على سجل يطابق الرقم المحدد.");
+            }
+        }
+        catch (Exception ex)
+        {
+            MessageBox.Show("حدث خطأ: " + ex.Message);
+        }
+    }
